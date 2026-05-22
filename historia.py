@@ -3,70 +3,68 @@ from PPlay.window import *
 from PPlay.gameimage import *
 from PPlay.gameobject import *
 from PPlay.keyboard import *
+from PPlay.mouse import *
 import pygame
-
-
-def criar_orda():
-    n = 5
-    vet = []
-    for i in range(n):
-        dravok = Sprite('imagens/dravok.png')
-        dravok.set_position(50 + (i * 40), 100) 
-        vet.append(dravok)
-    return vet
+from inimigos import *
+from tropas import *
 
 
 def loop(janela):
+    vetor = []
+    mouse = Mouse()
+    trpSelected = ''
     running = True
-    
-    teste = GameImage('imagens/mapa-1.png')
+    money = 200
+    teste = GameImage('imagens/mapa.png')
     teste.scale_x = 800 / teste.width
     teste.scale_y = 600 / teste.height
-    
+    Soldado = Sprite('imagens/soldado.png')
+    Soldado.set_position(400, 550)
     portao = GameImage('imagens/Gate.png')
     portao.scale_x = 0.07
     portao.scale_y = 0.07
     portao.rotation = 270
     portao.set_position(705, 470)
-    
-    soldado = Sprite('imagens/soldado.png')
-    soldado.scale_x = 0.2
-    soldado.scale_y = 0.2
-    
+
     keyboard = Keyboard()
-    
-    timerWave = 0
-    tempo_de_espera = 10
-    inimigos_na_tela = []
+    click_cooldown = 0
+
+    onda_atual = Orda([
+        inimigo.criarDravok(),
+        inimigo.criarDravok(),
+        inimigo.criarDravok(),
+        inimigo.criarPesado(),
+    ])
 
     while running:
-       
         if keyboard.key_pressed("ESC"):
-            break 
-            
-        timerWave += janela.delta_time()
-        
-      
-        if timerWave > tempo_de_espera:
-            nova_orda = criar_orda()
-            inimigos_na_tela.extend(nova_orda) 
-            timerWave = 0
+            break
 
-        
-        for dravok in inimigos_na_tela[:]: 
-            dravok.y += 50 * janela.delta_time()
-            dravok.x += 50 * janela.delta_time()
-            
-       
-            if dravok.y > 600:
-                inimigos_na_tela.remove(dravok)
-
-        
         teste.draw()
         portao.draw()
-        soldado.draw()
+        a,b = mouse.get_position()
         
-        for dravok in inimigos_na_tela:
-            dravok.draw()
+        if mouse.button_pressed (mouse.LEFT):
+            print(a,b)
+
+        Soldado.draw()
+        click_cooldown -= 100* janela.delta_time()
+
+        if mouse.button_pressed(mouse.LEFT) and click_cooldown <= 0:#verifica o clique e o cooldown
+            if mouse.is_over_object(Soldado): # se tiver clicado em soldado seleciona o mesmo
+                # clique no ícone: seleciona a tropa
+                trpSelected = 'Soldado'
+                click_cooldown = 100
+
+            elif trpSelected == 'Soldado' and money >= 100: # se o soldado tiver selecionado, verifica o dinheiro
+                # clique no mapa: coloca a tropa
+                mx, my = mouse.get_position() #pega a posiçao de clique do mouse
+                vetor.append(tropa.criarSoldado(mx, my)) #cria a tropa e adiciona no vetor de tropas
+                money -= 100
+                click_cooldown = 100
+        janela.draw_text(f"Money: {money}", 20,20)
+
+        money = onda_atual.update(janela,money)#atualiza a onda
+        loopTrp(janela, vetor, onda_atual.vet)#passa o vetor de tropas e o vetor de inimigos ativos e atualiza as tropas
 
         janela.update()

@@ -6,6 +6,7 @@ from PPlay.mouse import *
 import historia
 import colapso
 
+
 def menu():
     width = 800
     height = 600
@@ -35,7 +36,7 @@ def menu():
     
     mouse = Mouse()
     
-
+    
     cooldown_clique = 0
 
     while True:
@@ -64,6 +65,6 @@ def menu():
         btnsair.draw()
         janela.update()
 
-
+# Executa o menu apenas se este arquivo for o principal
 if __name__ == "__main__":
     menu()
