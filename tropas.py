@@ -9,7 +9,7 @@ class Tiro:
         self.alvo = alvo
         self.dano = dano
         self.danoesp = danoesp #dano contra escudo
-        self.velocidade = 6 
+        self.velocidade = 20 
         self.ativo = True #se o tiro ainda esta a caminho do alvo
 
     def update(self): #atualiza o tiro, roda em loop
@@ -21,13 +21,16 @@ class Tiro:
         dx = self.alvo.sprite.x - self.sprite.x
         dy = self.alvo.sprite.y - self.sprite.y
         dist = math.sqrt(dx * dx + dy * dy)
+        
         if dist < self.velocidade * 2: #destroi o tiro quando atinge o alvo
             self.alvo.receber_dano(self.dano, self.danoesp)
             self.ativo = False
         else: #move o tiro para o alvo
             self.sprite.x += (dx / dist) * self.velocidade
             self.sprite.y += (dy / dist) * self.velocidade
+            self.sprite.rotation = math.degrees(math.atan2(-dy, dx)) +90#gira a tropa de acordo com a direção do alvo
             self.sprite.draw()
+            
 
 
 class tropa: #classe da tropa
@@ -74,10 +77,27 @@ class tropa: #classe da tropa
             tiro.update()
 
     def criarSoldado(x, y): #cria um soldado
-        trop = tropa('soldado', 100, 25, 25, 150, 1, Sprite('imagens/soldado.png'), 'imagens/tiro.png')
-        trop.sprite.set_position(x, y)
+        trop = tropa('soldado', 100, 25, 0, 150, 1, Sprite('imagens/soldado.png'), 'imagens/tiro.png')
+        trop.sprite.set_position(x- trop.sprite.width/2, y - trop.sprite.height/2)
+        return trop
+    def criarSolari(x,y):
+        trop = tropa('solari',150,25,25,150,1, Sprite('imagens/solari.png'), 'imanges/tiro.png')
+        trop.sprite.set_position(x- trop.sprite.width/2, y - trop.sprite.height/2)
         return trop
 
+class Portao(): #classe do portao
+    def __init__(self, vida):
+        self.vida =vida
+        self.sprite = Sprite('imagens/Gate2.png')
+    
+    def chegouPortao(self,vetIni): #metodo que rebe o portao e o vetor de inimigos ativos
+        for ini in vetIni: #percorre cada inimigo do vetor de ativos
+            if (ini.sprite.collided(self.sprite)): #verifica se os sprites colidiram
+                self.vida -= ini.vida #se sim tira a vida restante do inimigo do portao
+                vetIni.remove(ini) #destroi o inimigo
+        if self.vida <=0:
+            return True#se a vida do portao for menor ou igual a zero retorna true e acaba a partida
+        return False #se nao retorna false e continua
 
 def loopTrp(janela, vetor, inimigos): #loop chamado no game para atualizar as tropas colocadas, recebe o vetor de tropas ativas e inimigos
     for trp in vetor:

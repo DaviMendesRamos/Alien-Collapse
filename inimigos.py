@@ -9,9 +9,9 @@ import math
 
 # Caminho predefinido: lista de (x, y) que os inimigos seguem em ordem
 CAMINHO = [
-    (0, 129),   # entrada (fora da tela, topo)
-    (100, 129),
-    (100, 520),
+    (0, 120),   # entrada (fora da tela, topo)
+    (90, 129),
+    (100, 500),
     (280, 520),
     (280, 70),
     (515, 70),
@@ -59,7 +59,7 @@ class inimigo():
             self.vida -= dano
 
     def morreu(self):
-        return self.vida <- 0 
+        return self.vida <= 0 
         
 
     def criarDravok():
@@ -74,25 +74,37 @@ class inimigo():
 
 
 class Orda:
+
     def __init__(self, Onda):
         self.Onda = Onda
         self.vet = []
         self.cooldown = 0
+        self.finalizada = False
 
-    def update(self, janela, money):
+    def update(self, janela, money, onda):
+
         self.cooldown += 100 * janela.delta_time()
 
         if self.cooldown > 500:
             self.cooldown = 0
+
             if self.Onda:
                 ini = self.Onda.pop(0)
                 self.vet.append(ini)
-        for i in self.vet:
-            for ini in self.vet:
-                if ini.morreu():
-                    money += ini.dinheiro
+
+        for ini in self.vet:
+            if ini.morreu():
+                money += ini.dinheiro
+
         self.vet = [ini for ini in self.vet if not ini.morreu()]
+
         for ini in self.vet:
             ini.seguir_caminho()
             ini.sprite.draw()
-        return money
+
+        # wave terminou
+        if len(self.vet) == 0 and len(self.Onda) == 0 and not self.finalizada:
+            onda += 1
+            self.finalizada = True
+
+        return money, onda

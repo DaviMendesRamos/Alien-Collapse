@@ -9,7 +9,8 @@ from inimigos import *
 from tropas import *
 
 
-def loop(janela):
+
+def loop(janela,baralho,creditos):
     vetor = []
     mouse = Mouse()
     trpSelected = ''
@@ -20,28 +21,36 @@ def loop(janela):
     teste.scale_y = 600 / teste.height
     Soldado = Sprite('imagens/soldado.png')
     Soldado.set_position(400, 550)
-    portao = GameImage('imagens/Gate.png')
-    portao.scale_x = 0.07
-    portao.scale_y = 0.07
-    portao.rotation = 270
-    portao.set_position(705, 470)
+    portao=Portao(100)
+    portao.sprite.rotation = 270
+    portao.sprite.set_position(705, 470)
 
     keyboard = Keyboard()
     click_cooldown = 0
-
-    onda_atual = Orda([
+    onda = 0
+    onda_atual= [Orda([
         inimigo.criarDravok(),
         inimigo.criarDravok(),
         inimigo.criarDravok(),
         inimigo.criarPesado(),
-    ])
+    ]),
+    Orda([
+        inimigo.criarDravok(),
+        inimigo.criarDravok(),
+        inimigo.criarPesado(),
+        inimigo.criarPesado(),
+        inimigo.criarPesado(),
+        inimigo.criarPesado(),
+        inimigo.criarDravok()
+        ])
+    ]
 
     while running:
         if keyboard.key_pressed("ESC"):
             break
 
         teste.draw()
-        portao.draw()
+        portao.sprite.draw()
         a,b = mouse.get_position()
         
         if mouse.button_pressed (mouse.LEFT):
@@ -63,8 +72,22 @@ def loop(janela):
                 money -= 100
                 click_cooldown = 100
         janela.draw_text(f"Money: {money}", 20,20)
-
-        money = onda_atual.update(janela,money)#atualiza a onda
-        loopTrp(janela, vetor, onda_atual.vet)#passa o vetor de tropas e o vetor de inimigos ativos e atualiza as tropas
+        janela.draw_text(f'Vida do Portão: {portao.vida}',150,20)
+        if onda <2:
+            money, onda = onda_atual[onda].update(janela,money,onda)#atualiza a onda
+            if onda<2:
+                loopTrp(janela, vetor, onda_atual[onda].vet)#passa o vetor de tropas e o vetor de inimigos ativos e atualiza as tropas
+                if (portao.chegouPortao(onda_atual[onda].vet)):
+                    janela.update()
+                    break
+            
+        else:
+            break
 
         janela.update()
+    if len(onda_atual[onda-1].vet) <=0 :
+        
+        creditos = creditos + (onda*10)
+        return creditos
+    else:
+        creditos = creditos + ((onda-1)*10)
