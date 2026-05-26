@@ -19,8 +19,6 @@ def loop(janela,baralho,creditos):
     teste = GameImage('imagens/mapa.png')
     teste.scale_x = 800 / teste.width
     teste.scale_y = 600 / teste.height
-    Soldado = Sprite('imagens/soldado.png')
-    Soldado.set_position(400, 550)
     portao=Portao(100)
     portao.sprite.rotation = 270
     portao.sprite.set_position(705, 470)
@@ -56,21 +54,42 @@ def loop(janela,baralho,creditos):
         if mouse.button_pressed (mouse.LEFT):
             print(a,b)
 
-        Soldado.draw()
+     
         click_cooldown -= 100* janela.delta_time()
 
-        if mouse.button_pressed(mouse.LEFT) and click_cooldown <= 0:#verifica o clique e o cooldown
-            if mouse.is_over_object(Soldado): # se tiver clicado em soldado seleciona o mesmo
-                # clique no ícone: seleciona a tropa
-                trpSelected = 'Soldado'
-                click_cooldown = 100
 
-            elif trpSelected == 'Soldado' and money >= 100: # se o soldado tiver selecionado, verifica o dinheiro
-                # clique no mapa: coloca a tropa
-                mx, my = mouse.get_position() #pega a posiçao de clique do mouse
-                vetor.append(tropa.criarSoldado(mx, my)) #cria a tropa e adiciona no vetor de tropas
-                money -= 100
-                click_cooldown = 100
+        for i in range (len(baralho)):
+            baralho[i].sprite.draw()
+            baralho[i].sprite.set_position(i*50 + 250,550)
+
+        for trp in baralho:
+
+            if mouse.button_pressed(mouse.LEFT) and click_cooldown <= 0:#verifica o clique e o cooldown
+                if mouse.is_over_object(trp.sprite): # se tiver clicado em soldado seleciona o mesmo
+                    # clique no ícone: seleciona a tropa
+                    trpSelected = trp.nome
+                    click_cooldown = 100
+
+        # Coloca a tropa no mapa
+        if mouse.button_pressed(mouse.LEFT) and click_cooldown <= 0:
+
+            mx, my = mouse.get_position()
+
+            for trp in baralho:
+
+                if trpSelected == trp.nome and money >= trp.custo:
+
+                    if trp.nome == 'soldado':
+                        vetor.append(tropa.criarSoldado(mx, my))
+
+                    elif trp.nome == 'solari':
+                        vetor.append(tropa.criarSolari(mx, my))
+
+                    money -= trp.custo
+                    click_cooldown = 100
+                    break
+           
+        
         janela.draw_text(f"Money: {money}", 20,20)
         janela.draw_text(f'Vida do Portão: {portao.vida}',150,20)
         if onda <2:

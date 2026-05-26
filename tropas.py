@@ -81,7 +81,7 @@ class tropa: #classe da tropa
         trop.sprite.set_position(x- trop.sprite.width/2, y - trop.sprite.height/2)
         return trop
     def criarSolari(x,y):
-        trop = tropa('solari',150,25,25,150,1, Sprite('imagens/solari.png'), 'imanges/tiro.png')
+        trop = tropa('solari',150,25,25,150,1, Sprite('imagens/solari.png'), 'imagens/tiro.png')
         trop.sprite.set_position(x- trop.sprite.width/2, y - trop.sprite.height/2)
         return trop
 
