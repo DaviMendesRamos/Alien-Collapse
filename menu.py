@@ -16,8 +16,9 @@ def menu(creditos):
     btnhistoria = Sprite('imagens/btnhistoria.png')
     btncolapso = Sprite('imagens/btncolapso.png')
     btnsair = Sprite('imagens/btnsair.png')
-    vetEquipadas = [tropa('soldado', 100, 25, 25, 150, 1, Sprite('imagens/soldado.png'), 'imagens/tiro.png')]
     vetCompradas = [tropa('soldado', 100, 25, 25, 150, 1, Sprite('imagens/soldado.png'), 'imagens/tiro.png')]
+    vetEquipadas = vetCompradas.copy()
+    
     vetLoja = [tropa('soldado', 100, 25, 25, 150, 1, Sprite('imagens/soldado.png'), 'imagens/tiro.png'),
                 tropa('solari',150,25,25,150,1, Sprite('imagens/solari.png'), 'imagens/tiro.png')]
     
@@ -76,17 +77,29 @@ def menu(creditos):
          
         for i in range(len(vetLoja)):
             if mouse.is_over_object(vetLoja[i].sprite) and mouse.button_pressed(1) and cooldown_clique > 1:
-                if creditos > vetLoja[i].custo:
-                    if not any(t.nome == vetLoja[i].nome for t in vetCompradas):
+
+                # Não comprou ainda
+                if not any(t.nome == vetLoja[i].nome for t in vetCompradas):
+
+                    if creditos >= vetLoja[i].custo:
                         creditos -= vetLoja[i].custo
                         vetCompradas.append(vetLoja[i])
-                        vetEquipadas.append(vetLoja[i])
+                    else:
+                        janela.draw_text('Sem creditos', 100, 100)
 
-                    cooldown_clique = 0
+                # Comprou mas não equipou
+                elif not any(t.nome == vetLoja[i].nome for t in vetEquipadas):
+                    vetEquipadas.append(vetLoja[i])
+
+                # Já está equipada → desequipa
                 else:
-                    cooldown_clique = 0
-                    janela.draw_text('Sem creditos', 100, 100)
-                    janela.update()
+                    for trop in vetEquipadas:
+                        if trop.nome == vetLoja[i].nome:
+                            vetEquipadas.remove(trop)
+                            break
+
+                cooldown_clique = 0
+        
        
         if mouse.button_pressed(1) and cooldown_clique >= 1:
             if mouse.is_over_object(btnhistoria):

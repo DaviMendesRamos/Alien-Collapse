@@ -7,7 +7,7 @@ from PPlay.mouse import *
 import pygame
 from inimigos import *
 from tropas import *
-
+import ondas
 
 
 def loop(janela,baralho,creditos):
@@ -26,22 +26,8 @@ def loop(janela,baralho,creditos):
     keyboard = Keyboard()
     click_cooldown = 0
     onda = 0
-    onda_atual= [Orda([
-        inimigo.criarDravok(),
-        inimigo.criarDravok(),
-        inimigo.criarDravok(),
-        inimigo.criarPesado(),
-    ]),
-    Orda([
-        inimigo.criarDravok(),
-        inimigo.criarDravok(),
-        inimigo.criarPesado(),
-        inimigo.criarPesado(),
-        inimigo.criarPesado(),
-        inimigo.criarPesado(),
-        inimigo.criarDravok()
-        ])
-    ]
+    onda_atual = ondas.criar_ondas()
+    
 
     while running:
         if keyboard.key_pressed("ESC"):
@@ -91,10 +77,11 @@ def loop(janela,baralho,creditos):
            
         
         janela.draw_text(f"Money: {money}", 20,20)
-        janela.draw_text(f'Vida do Portão: {portao.vida}',150,20)
-        if onda <2:
+        janela.draw_text(f'Vida do Portão: {portao.vida}',janela.width/2 - 30,20)
+        janela.draw_text(f'ONDA: {onda+1}', janela.width/2 -30,10)
+        if onda <3:
             money, onda = onda_atual[onda].update(janela,money,onda)#atualiza a onda
-            if onda<2:
+            if onda<3:
                 loopTrp(janela, vetor, onda_atual[onda].vet)#passa o vetor de tropas e o vetor de inimigos ativos e atualiza as tropas
                 if (portao.chegouPortao(onda_atual[onda].vet)):
                     janela.update()

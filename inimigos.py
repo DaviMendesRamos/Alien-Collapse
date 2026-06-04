@@ -9,15 +9,16 @@ import math
 
 # Caminho predefinido: lista de (x, y) que os inimigos seguem em ordem
 CAMINHO = [
-    (0, 120),   # entrada (fora da tela, topo)
-    (90, 129),
-    (100, 500),
-    (280, 520),
-    (280, 70),
-    (515, 70),
-    (646, 337),
-    (640, 514),
-    (773, 514),  # destino final (portão)
+    (0, 100),   # entrada (fora da tela, topo)
+    (85, 100),
+    (85, 490),
+    (260, 490),
+    (260, 35),
+    (495, 35),
+    (495, 305),
+    (630, 305),
+    (630, 500),
+    (750, 500),  # destino final (portão)
 ]
 
 
@@ -85,7 +86,7 @@ class Orda:
 
         self.cooldown += 100 * janela.delta_time()
 
-        if self.cooldown > 500:
+        if self.cooldown > 200:
             self.cooldown = 0
 
             if self.Onda:
