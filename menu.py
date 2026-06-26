@@ -103,11 +103,13 @@ def menu(creditos):
        
         if mouse.button_pressed(1) and cooldown_clique >= 1:
             if mouse.is_over_object(btnhistoria):
-                creditos = historia.loop(janela, vetEquipadas, creditos) 
+                colapso=False
+                creditos = historia.loop(janela, vetEquipadas, creditos,colapso ) 
                 cooldown_clique = 0 
                 
             elif mouse.is_over_object(btncolapso):
-                colapso.loop(janela)
+                colapso=True
+                creditos = historia.loop(janela, vetEquipadas, creditos,colapso )
                 cooldown_clique = 0
                 
             elif mouse.is_over_object(btnsair):

@@ -8,9 +8,10 @@ import pygame
 from inimigos import *
 from tropas import *
 import ondas
+import colapso
 
 
-def loop(janela,baralho,creditos):
+def loop(janela,baralho,creditos, colapso):
     vetor = []
     mouse = Mouse()
     trpSelected = ''
@@ -26,7 +27,10 @@ def loop(janela,baralho,creditos):
     keyboard = Keyboard()
     click_cooldown = 0
     onda = 0
-    onda_atual = ondas.criar_ondas()
+    if colapso == True:
+        onda_atual = colapso.criar_ondas()
+    else:
+        onda_atual = ondas.criar_ondas()
     
 
     while running:
