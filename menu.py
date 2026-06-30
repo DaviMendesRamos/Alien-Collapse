@@ -2,6 +2,7 @@ from PPlay.sprite import *
 from PPlay.window import *
 from PPlay.mouse import *
 from tropas import*
+from PPlay.gameimage import*
 import historia
 import colapso
 
@@ -9,12 +10,17 @@ def menu(creditos):
     width = 800
     height = 600
     
+    
     background = (100, 150, 120)
     janela = Window(width, height)
     janela.set_title("Menu Principal")
-
-    btnhistoria = Sprite('imagens/btnhistoria.png')
-    btncolapso = Sprite('imagens/btncolapso.png')
+    teste = GameImage('imagens/menu_fundo.png')
+    teste.scale_x = 800 / teste.width
+    teste.scale_y = 600 / teste.height
+    titulo = Sprite('imagens/titulo.png')
+    titulo.set_position(width/2- titulo.width/2,40)
+    btnhistoria = Sprite('imagens/modo_historia_fundo.png')
+    btncolapso = Sprite('imagens/modo_colapso_fundo.png')
     btnsair = Sprite('imagens/btnsair.png')
     vetCompradas = [tropa('soldado', 100, 25, 25, 150, 1, Sprite('imagens/soldado.png'), 'imagens/tiro.png')]
     vetEquipadas = vetCompradas.copy()
@@ -22,26 +28,18 @@ def menu(creditos):
     vetLoja = [tropa('soldado', 100, 25, 25, 150, 1, Sprite('imagens/soldado.png'), 'imagens/tiro.png'),
                 tropa('solari',150,25,25,150,1, Sprite('imagens/solari.png'), 'imagens/tiro.png')]
     
-    escala_botoes = 0.2
-    escala_sair = 0.5
+
     
-    btnhistoria.scale_x = escala_botoes
-    btnhistoria.scale_y = escala_botoes
-    btncolapso.scale_x = escala_botoes
-    btncolapso.scale_y = escala_botoes
-    btnsair.scale_x = escala_sair
-    btnsair.scale_y = escala_sair
-    
-    btnhistoria.set_position(width/2 - (btnhistoria.width * escala_botoes / 2), height/2 - 80)
-    btncolapso.set_position(width/2 - (btncolapso.width * escala_botoes / 2), height/2)
-    btnsair.set_position(width/2 - (btnsair.width * escala_sair / 2), height/2 + 80)
+    btnhistoria.set_position(width/2 - btnhistoria.width/2 , height/2 - 80)
+    btncolapso.set_position(width/2 - (btncolapso.width/2), height/2)
+    btnsair.set_position(width/2 - (btnsair.width/2), height/2 + 80)
     mouse = Mouse()
     
     
     cooldown_clique = 0
 
     while True:
-        
+        teste.draw()
         indice = 0
 
         for i in range(2):
@@ -114,8 +112,10 @@ def menu(creditos):
                 
             elif mouse.is_over_object(btnsair):
                 break 
+        
         janela.draw_text(f'Creditos : {creditos}',100,50, tamanho =15)
         janela.set_background_color(background)
+        titulo.draw()
         btnhistoria.draw()
         btncolapso.draw()
         btnsair.draw()
